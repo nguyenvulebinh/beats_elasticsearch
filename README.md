@@ -25,6 +25,7 @@ Elastic cung cấp thư viện "libbeat" giúp tùy biến các chức năng c�
 ## Cài đặt và sử dụng
 
   + **Cài đặt**
+  
     Filebeat được sử dụng kết hợp với ELK stack (bao gồm các module Elasticsearch, Logstash, Kibana) nên trước khi cài đặt Filebeat cần thực hiện cài đặt các module này. Tham khảo tài liệu [2]  
 
     Sau khi cài đặt xong các module này ta thực hiện cài đặt Filebeat theo hướng dẫn [3]
@@ -94,6 +95,78 @@ Elastic cung cấp thư viện "libbeat" giúp tùy biến các chức năng c�
       #overwrite: false
     ```
     
+  + **Sử dụng** 
+    
+    Đơn giản chỉ việc start Filebeat lên và Filebeat sẽ tự động gửi log tới Elasticsearch 
+
+    ```
+    sudo /etc/init.d/filebeat start
+    ```
+    
+    Khi đã khởi động Filebeat, ta có thể xem dữ liệu đã được gửi lên thành công chưa. Ta gửi request lên Elasticsearch. Lưu ý khi Filebeat gửi dữ liệu lên, index sẽ có định dạng là filebeat-*, * ở đây là định dạng ngày sẽ thay đổi theo từng ngày.
+    
+    ```
+    curl -i -XGET 'http://localhost:9200/filebeat-*/log/_search?pretty'
+    ```
+  
+    Ví dụ kết quả trả về sẽ như này
+    
+    ```
+    {
+      "took" : 5,
+      "timed_out" : false,
+      "_shards" : {
+        "total" : 5,
+        "successful" : 5,
+        "failed" : 0
+      },
+      "hits" : {
+        "total" : 2,
+        "max_score" : 1.0,
+        "hits" : [ {
+          "_index" : "filebeat-2016.08.05",
+          "_type" : "log",
+          "_id" : "AVZbJacBpyT_MiMazAOT",
+          "_score" : 1.0,
+          "_source" : {
+            "@timestamp" : "2016-08-05T14:40:05.463Z",
+            "beat" : {
+              "hostname" : "elk",
+              "name" : "elk"
+            },
+            "count" : 1,
+            "fields" : null,
+            "input_type" : "log",
+            "message" : "haha",
+            "offset" : 53,
+            "source" : "/var/log/nguyenbinh.log",
+            "type" : "log"
+          }
+        }, {
+          "_index" : "filebeat-2016.08.05",
+          "_type" : "log",
+          "_id" : "AVZbKsampyT_MiMazAOZ",
+          "_score" : 1.0,
+          "_source" : {
+            "@timestamp" : "2016-08-05T14:45:40.510Z",
+            "beat" : {
+              "hostname" : "elk",
+              "name" : "elk"
+            },
+            "count" : 1,
+            "fields" : null,
+            "input_type" : "log",
+            "message" : "bobo",
+            "offset" : 58,
+            "source" : "/var/log/nguyenbinh.log",
+            "type" : "log"
+          }
+        } ]
+      }
+    }
+
+    ```
+  
 ## Tài liệu tham khảo
 
 [1] https://www.elastic.co/guide/en/beats/libbeat/current/community-beats.html
