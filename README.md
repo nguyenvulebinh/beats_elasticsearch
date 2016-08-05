@@ -20,8 +20,85 @@ Elastic cung cấp thư viện "libbeat" giúp tùy biến các chức năng c�
 
   ![alt tag](https://github.com/nguyenvulebinh/beats_elasticsearch/blob/master/filebeat.png)
   
-  Trong kiến trúc của Filebeat, khi bắt đầu khởi động, mỗi thư mục sẽ được theo dõi bởi một prospectors, prospectors sẽ khởi tạo mỗi harvester tương ứng với một file. Prospectors sẽ tổng hợp lại các sự kiện và nỗi dung thay đổi sau đó chuyển cho spooler để gửi ra ngoài.
+  Trong kiến trúc của Filebeat, khi bắt đầu khởi động, mỗi thư mục sẽ được theo dõi bởi một prospectors, prospectors sẽ khởi tạo mỗi harvester tương ứng với một file để theo dõi sự thay đổi trên file này. Prospectors sẽ tổng hợp lại các sự kiện và nỗi dung thay đổi sau đó chuyển cho spooler để gửi ra ngoài.
   
+## Cài đặt và sử dụng
+
+  + **Cài đặt**
+    Filebeat được sử dụng kết hợp với ELK stack (bao gồm các module Elasticsearch, Logstash, Kibana) nên trước khi cài đặt Filebeat cần thực hiện cài đặt các module này. Tham khảo tài liệu [2]  
+
+    Sau khi cài đặt xong các module này ta thực hiện cài đặt Filebeat theo hướng dẫn [3]
+    
+    Cấu hình kết nối Filebeat tới Elasticsearch (file /etc/filebeat/filebeat.yml)
+    
+    ```
+    # Configure what outputs to use when sending the data collected by the beat.
+    # Multiple outputs may be used.
+    output:
+    ### Elasticsearch as output
+    elasticsearch:
+      # Array of hosts to connect to.
+      hosts: ["192.168.1.42:9200"]
+    ```
+    Cấu hình kết nối Filebeat tới Logstash (Lưu ý phải comment phần cấu hình kết nối tới Elasticsearch trước)
+    
+    ```
+    output:
+    logstash:
+    hosts: ["127.0.0.1:5044"]
+
+    # Optional load balance the events between the Logstash hosts
+    #loadbalance: true
+    ```
+    Cấu hình thư mục để  Filebeat theo dõi
+    
+    ```
+    filebeat:
+    # List of prospectors to fetch data.
+    prospectors:
+    # Each - is a prospector. Below are the prospector specific configurations
+    # Paths that should be crawled and fetched. Glob based paths.
+    # For each file found under this path, a harvester is started.
+    paths:
+      - "/var/log/*.log"
+      #- c:\programdata\elasticsearch\logs\*
+
+    # Type of the files. Based on this the way the file is read is decided.
+    # The different types cannot be mixed in one prospector
+    #
+    # Possible options are:
+    # * log: Reads every line of the log file (default)
+    # * stdin: Reads the standard in
+    input_type: log
+    ```
+    
+    Cấu hình Template định dạng type và các trường của type để gửi lên Elasticsearch
+
+    ```
+    output:
+    elasticsearch:
+    hosts: ["localhost:9200"]
+
+    # A template is used to set the mapping in Elasticsearch
+    # By default template loading is disabled and no template is loaded.
+    # These settings can be adjusted to load your own template or overwrite existing ones
+    template:
+
+      # Template name. By default the template name is filebeat.
+      #name: "filebeat"
+
+      # Path to template file
+      path: "filebeat.template.json"
+
+      # Overwrite existing template
+      #overwrite: false
+    ```
+    
 ## Tài liệu tham khảo
 
 [1] https://www.elastic.co/guide/en/beats/libbeat/current/community-beats.html
+
+[2] https://www.elastic.co/guide/en/beats/libbeat/1.2/getting-started.html
+
+[3] https://www.elastic.co/guide/en/beats/filebeat/1.2/filebeat-installation.html
+
