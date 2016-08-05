@@ -7,9 +7,9 @@
   ![alt tag](https://github.com/nguyenvulebinh/beats_elasticsearch/blob/master/beats-platform.png)
   
   Elastic cung cấp 3 bản tùy biến của Beats bao gồm
-    - Packetbeat: is a network packet analyzer that ships information about the transactions exchanged between your application servers
-    - Topbeat: is a server monitoring agent that periodically ships system-wide and per-process statistics from your servers
-    - Filebeat: ships log files from your servers.
+  - Packetbeat: is a network packet analyzer that ships information about the transactions exchanged between your application servers
+  - Topbeat: is a server monitoring agent that periodically ships system-wide and per-process statistics from your servers
+  - Filebeat: ships log files from your servers.
     
   Elastic cung cấp thư viện "libbeat" giúp tùy biến các chức năng của Beats theo miền ứng dụng nên ngoài 3 bản tùy biến trên, cộng đồng cũng đưa ra rất nhiều bản tùy biến khác nhau. Xem thêm ở link [1]
   
